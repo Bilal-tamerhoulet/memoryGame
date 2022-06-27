@@ -316,7 +316,7 @@ function restartGame() {
         window.localStorage.setItem("last_played", lastTimePlayed());
         setTimeout(() => {
             location.reload();
-        }, 1000)
+        }, 500)
     }
 }
 
@@ -420,14 +420,5 @@ function useTimerValidation(arr) {
 }
 
 function lastTimePlayed() {
-    let date = new Date();
-    let year = date.getFullYear();
-    let month = date.getMonth();
-    let day = date.getDay();
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds(); 
-    let fullDate = `${year}/${month}/${day} / ${hours}:${minutes}:${seconds}`;
-
-    return fullDate;
+    return new Date();
 }
