@@ -71,10 +71,13 @@ function useTimerInput(){
             document.getElementById("name").classList.remove("border-0");
             return;
           }
-          // set the session Storage
-          sessionStorage.setItem("name", options.name);
-
-          document.getElementById("player_Name").innerHTML = sessionStorage.getItem("name");
+          // set the local Storage
+          
+          localStorage.setItem("name", options.name);
+          if(window.localStorage.getItem("last_played")){ 
+            document.getElementById("last_played").innerHTML = localStorage.getItem("last_played");
+          }
+          document.getElementById("player_Name").innerHTML = localStorage.getItem("name");
 
           if(formData.get("useTimer")) { let flip = new FlipDown(Math.floor(addMinutes(parseInt(options.timeInMinutes)).getTime() / 1000)); 
           if(document.getElementById("flipdown").children.length == 0 ) {
@@ -310,7 +313,10 @@ function restartGame() {
     document.querySelector("body").appendChild(restartBtn);
 
     restartBtn.onclick = () => {
-        location.reload();
+        window.localStorage.setItem("last_played", lastTimePlayed());
+        setTimeout(() => {
+            location.reload();
+        }, 1000)
     }
 }
 
@@ -423,5 +429,5 @@ function lastTimePlayed() {
     let seconds = date.getSeconds(); 
     let fullDate = `${year}/${month}/${day} / ${hours}:${minutes}:${seconds}`;
 
-    return fullDate();
+    return fullDate;
 }
