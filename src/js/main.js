@@ -39,13 +39,7 @@ function useTimerInput(){
             element.setAttribute("disabled", "disabled");
         });
     }
-
 }
-
-
-
-
-
     // handle useTimerInput
     document.querySelector(".peer").addEventListener("click", useTimerInput);
 
@@ -53,9 +47,7 @@ function useTimerInput(){
         e.preventDefault();
         const formData = new FormData(form);
 
-        
         for (const [key, value] of formData) {
-            console.log(key, value);
             options[key] = value;
 
             // Check if the user used the useTimer Option
@@ -71,12 +63,12 @@ function useTimerInput(){
             document.getElementById("name").classList.remove("border-0");
             return;
           }
+
           // set the local Storage
-          
           localStorage.setItem("name", options.name);
           if(window.localStorage.getItem("last_played")){ 
-            document.getElementById("last_played").innerHTML = localStorage.getItem("last_played");
-          }
+            document.getElementById("last_played").innerHTML = localStorage.getItem("last_played");}
+
           document.getElementById("player_Name").innerHTML = localStorage.getItem("name");
 
           if(formData.get("useTimer")) { let flip = new FlipDown(Math.floor(addMinutes(parseInt(options.timeInMinutes)).getTime() / 1000)); 
@@ -106,17 +98,12 @@ function useTimerInput(){
 
             // Append the Cards the the #App
             for(i = 0; i < imgs.length; i++) {  createBlocks(); }
-            console.log(document.readyState);
             if(document.readyState == "complete") {
                 startGame(options);
             };
     })
 
-
-
 function startGame(options) {
-
-    
 
     document.querySelector(".form").classList.add("invisible");
     // Set Some Variables
@@ -125,119 +112,110 @@ function startGame(options) {
     let countBlocks = [...Array(blocksToArray.length).keys()];
 
     // Start Background Sound
+    if(document.readyState === "complete"){
+
+        var sound = new Howl({
+            src: ['./song/background-sound.mp3'],
+            autoplay: true,
+            loop: true,
+            volume: 0.4,
+        });
+        sound.play(); }
+
     
-        if(document.readyState === "complete"){
+        blocksToArray.forEach((gameblock, index) => {
 
-            var sound = new Howl({
-                src: ['./song/background-sound.mp3'],
-                autoplay: true,
-                loop: true,
-                volume: 0.4,
-            });
-            sound.play(); }
+        // Show The Cards for a Certain time Before The Game Begins
+        gameblock.classList.add("visible");
+        setTimeout(() => {
+            gameblock.classList.remove("visible");
+            // document.getElementById("alert").classList.add("invisible")
+        }, options.visibletime);
+            
+        // shuffle the gameBlocks
+        let shuffled = shuffle(countBlocks);
+        gameblock.style.order = shuffled[index];
+            
+        // Add Class Flipped on the clicked Card
+        gameblock.onclick = function() {
+            gameblock.classList.add("flipped");
+            let allflippedblocks = blocksToArray.filter(flippedblock => flippedblock.classList.contains("flipped") );
+            // Call The Check Function Where it checks if the cards are the same
+            check(allflippedblocks); 
+        }
+        
+        
+        function check(arr){
 
+        if(options.max_tries != false || options.max_tries != 0) { 
+            if(arr.length >= 2) {
+                // prevent from Clicking if already tow card are flipped
+                document.getElementById("App").classList.add("no-click");
+                
+                // check if they are the same
+                if(arr[0].dataset.pic === arr[1].dataset.pic) {
+                    
+                    // Prevent the user From clicked on the flipped cards
+                    stopFromClicking(arr);
+                    
+                    // Play the Success Sound
+                    var sound = new Howl({ src: ['./song/success-sound-effect.mp3'], });
+                    sound.rate(3, sound.play());
     
-            blocksToArray.forEach((gameblock, index) => {
+                    // Keep the cards Visible
+                    arr[0].classList.add("visible");
+                    arr[1].classList.add("visible");
+                    arr[0].classList.remove("flipped");
+                    arr[1].classList.remove("flipped");
+    
+                    let gameSolved = arr.every(arrb => arrb.classList.contains("visible"));
 
-                // Show The Cards for a Certain time Before The Game Begins
-                gameblock.classList.add("visible");
+                    if(gameSolved) {
+    
+                        FoundPics.push({name: arr[0].dataset.pic});
+                        if(FoundPics.length == blocksToArray.length / 2){
+                            setTimeout(() => {
+                                document.getElementById("App").classList.add("no-click");
+                                cry_dance_scene("./imgs/dancing.gif");
+                            }, options.cardFlipDuration)
+                        }
+                    }
+    
+                    document.getElementById("App").classList.remove("no-click");
+                        
+                } else {
+                var sound = new Howl({
+                    src: ['./song/Wrong Clakson Sound Effect.mp3'],
+                    volume: 0.3,
+                    });
+                sound.rate(1, sound.play());
+                    
                 setTimeout(() => {
-                    gameblock.classList.remove("visible");
-                    // document.getElementById("alert").classList.add("invisible")
-                }, options.visibletime);
-                
-                // shuffle the gameBlocks
-                let shuffled = shuffle(countBlocks);
-                gameblock.style.order = shuffled[index];
-                
-                
+                    if(options.max_tries !== "unlimited"){
+                        document.getElementById("max_tries_span").innerHTML = parseInt(document.getElementById("max_tries_span").innerHTML) - 1;
+                        options.max_tries--;}
 
-                // Add Class Flipped on the clicked Card
-                gameblock.onclick = function() {
-                    gameblock.classList.add("flipped");
-                    let allflippedblocks = blocksToArray.filter(flippedblock => flippedblock.classList.contains("flipped") );
-                    // Call The Check Function Where it checks if the cards are the same
-                    check(allflippedblocks); 
-                }
+                arr[0].classList.remove("flipped");
+                arr[1].classList.remove("flipped");
+
+                document.getElementById("App").classList.remove("no-click");
+            }, options.cardFlipDuration);}
+
+            }
+
+            } else {
+            if(options.max_tries == 0 && options.useTimer != true) {
+                cry_dance_scene("./imgs/sad-crying.gif");
+            }
+            }
+            if(options.useTimer == true) { useTimerValidation(arr) }
+        }
             
-            
-                function check(arr){
-
-                    if(options.max_tries != false || options.max_tries != 0) { 
-                        if(arr.length >= 2) {
-                            // prevent from Clicking if already tow card are flipped
-                            document.getElementById("App").classList.add("no-click");
-                            
-                            // check if they are the same
-                            if(arr[0].dataset.pic === arr[1].dataset.pic) {
-                                
-                                // Prevent the user From clicked on the flipped cards
-                                stopFromClicking(arr);
-                                
-                                // Play the Success Sound
-                                var sound = new Howl({ src: ['./song/success-sound-effect.mp3'], });
-                                sound.rate(3, sound.play());
-                
-                                // Keep the cards Visible
-                                arr[0].classList.add("visible");
-                                arr[1].classList.add("visible");
-                                arr[0].classList.remove("flipped");
-                                arr[1].classList.remove("flipped");
-                
-                                let gameSolved = arr.every(arrb => arrb.classList.contains("visible"));
-
-                                if(gameSolved) {
-                
-                                    FoundPics.push({name: arr[0].dataset.pic});
-                                    if(FoundPics.length == blocksToArray.length / 2){
-                                        setTimeout(() => {
-                                            document.getElementById("App").classList.add("no-click");
-                                            cry_dance_scene("./imgs/dancing.gif");
-                                        }, options.cardFlipDuration)
-                                    }
-                                }
-                
-                                console.log(FoundPics);
-                                document.getElementById("App").classList.remove("no-click");
-                                
-                                console.log("matched")
-                
-                            } else {
-                                var sound = new Howl({
-                                    src: ['./song/Wrong Clakson Sound Effect.mp3'],
-                                    volume: 0.3,
-                                    });
-                                    sound.rate(1, sound.play());
-                                
-                                    setTimeout(() => {
-                                    
-                                    if(options.max_tries !== "unlimited"){
-                                        document.getElementById("max_tries_span").innerHTML = parseInt(document.getElementById("max_tries_span").innerHTML) - 1;
-                                        options.max_tries--;
-                                    }
-                                    arr[0].classList.remove("flipped");
-                                    arr[1].classList.remove("flipped");
-                                    document.getElementById("App").classList.remove("no-click");
-                                }, options.cardFlipDuration);
-                                
-                            }
-                        }
-                     } else {
-                        if(options.max_tries == 0 && options.useTimer != true) {
-
-                            cry_dance_scene("./imgs/sad-crying.gif");
-                        }
-                     }
-                    if(options.useTimer == true) { useTimerValidation(arr) }
-                }
-                
-            });
-
+        });
 }
 
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
-  
     // While there remain elements to shuffle.
     while (currentIndex != 0) {
   
@@ -254,10 +232,9 @@ function shuffle(array) {
   }
  
 function stopFromClicking(arr){
-        let allElements = document.querySelectorAll(`.game-block[data-pic='${arr[0].dataset.pic}']`);
-        allElements.forEach(element => {
-            element.classList.add("no-click");
-    });
+    let allElements = document.querySelectorAll(`.game-block[data-pic='${arr[0].dataset.pic}']`);
+    allElements.forEach(element => {
+        element.classList.add("no-click");});
 }
 
 function createBlocks() {
@@ -281,7 +258,6 @@ function createBlocks() {
     parentBlock.appendChild(backFace);
 
     
-
     let parentBlock2 = document.createElement("div");
     parentBlock2.classList.add("game-block", "relative", "h-36", "w-36");
     parentBlock2.dataset.pic = imgs[i].dataAttr;
@@ -393,10 +369,7 @@ function useTimerValidation(arr) {
                 }
             }
 
-            console.log(FoundPics);
             document.getElementById("App").classList.remove("no-click");
-            
-            console.log("matched");
 
         } else {
             var sound = new Howl({
@@ -414,7 +387,6 @@ function useTimerValidation(arr) {
                 document.getElementById("App").classList.remove("no-click");
             }, options.cardFlipDuration);
             
-            console.log("not Matched")
         }
     }
 }
