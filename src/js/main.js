@@ -51,8 +51,9 @@ function useTimerInput(){
 
     submitBtn.addEventListener("click", function(e) {
         e.preventDefault();
-
         const formData = new FormData(form);
+
+        
         for (const [key, value] of formData) {
             console.log(key, value);
             options[key] = value;
@@ -64,7 +65,17 @@ function useTimerInput(){
             formData.get("useTimer") ? document.getElementById("max_tries_span").parentElement.classList.add("invisible") : document.getElementById("max_tries_span").innerHTML = parseInt(options.max_tries);
             formData.get("max_tries") == "unlimited" ? document.getElementById("max_tries_span").innerHTML = "unlimited" : document.getElementById("max_tries_span").innerHTML = parseInt(options.max_tries);
         }
-          console.log(options);
+          if(options.name == ""){
+            alert("name is required");
+            document.getElementById("name").classList.add("border-red-600", "border");
+            document.getElementById("name").classList.remove("border-0");
+            return;
+          }
+          // set the session Storage
+          sessionStorage.setItem("name", options.name);
+
+          document.getElementById("player_Name").innerHTML = sessionStorage.getItem("name");
+
           if(formData.get("useTimer")) { let flip = new FlipDown(Math.floor(addMinutes(parseInt(options.timeInMinutes)).getTime() / 1000)); 
           if(document.getElementById("flipdown").children.length == 0 ) {
             flip.start();
@@ -117,7 +128,8 @@ function startGame(options) {
             var sound = new Howl({
                 src: ['./song/background-sound.mp3'],
                 autoplay: true,
-                loop: true
+                loop: true,
+                volume: 0.4,
             });
             sound.play(); }
 
