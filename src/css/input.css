@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body{
+    background: #ececec;
+
+}
+.game-block{
+    transform: rotateY(180deg);
+    transform-style: preserve-3d;
+    transition: transform .5s;
+    cursor: pointer;
+    flex: 1 0 21% !important;
+}
+.no-click{
+    pointer-events: none;
+}
+.game-block.flipped, .game-block.visible {
+    transform: rotateY(0deg);
+    pointer-events: none;
+}
+.game-block .front{
+   /* From https://css.glass */
+    background: rgba(55, 12, 234, 0.54);
+    border-radius: 16px;
+    border: 1px solid rgba(55, 12, 234, 0.08);
+    box-shadow: -10px 11px 11px #6d55cf48;
+}
+.game-block .front::before{
+    content: "!";
+    font-size: 90px;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #eee;
+}
+.game-block .back{
+    backface-visibility: hidden;
+    background-color: #eee;
+    border: 1px solid rgba(55, 12, 234, 0.08);
+}
+/* .game-block .back img {
+    max-width: 100%;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+} */
+
+.memory-game-container{
+
+    /* display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px 5px;
+    grid-auto-flow: row;
+    grid-template-areas:
+    ". . . ."
+    ". . . ."
+    ". . . ."
+    ". . . ." */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    /* grid-template-rows: repeat(4, 1fr); */
+    gap: 15px 0px;
+    grid-auto-flow: row;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+      
+      
+}
+iframe{
+    position:absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+}
+iframe img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: .3;
+}
+div.form{
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    right: 0;
+    z-index: 1;
+    left: 0;
+    margin: 0;
+    padding: 24px 0;
+    min-width: 100%;
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(9.9px);
+    -webkit-backdrop-filter: blur(6.9px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.rotor-group:nth-child(1), .rotor-group:nth-child(2) {
+    display:none;
+}
