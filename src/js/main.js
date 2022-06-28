@@ -67,9 +67,6 @@ function useTimerInput(){
 
           // set the local Storage
           localStorage.setItem("name", options.name);
-          if(window.localStorage.getItem("last_played")){ 
-            document.getElementById("last_played").innerHTML = localStorage.getItem("last_played");}
-
           document.getElementById("player_Name").innerHTML = localStorage.getItem("name");
 
           if(formData.get("useTimer")) { let flip = new FlipDown(Math.floor(addMinutes(parseInt(options.timeInMinutes)).getTime() / 1000)); 
@@ -101,6 +98,8 @@ function useTimerInput(){
             for(i = 0; i < imgs.length; i++) {  createBlocks(); }
             if(document.readyState == "complete") {
                 window.localStorage.setItem("last_played", lastTimePlayed());
+                if(window.localStorage.getItem("last_played")){ 
+                    document.getElementById("last_played").innerHTML = localStorage.getItem("last_played");}
                 startGame(options);
             };
     })
