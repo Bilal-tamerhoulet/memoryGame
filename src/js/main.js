@@ -45,6 +45,7 @@ function useTimerInput(){
 
     submitBtn.addEventListener("click", function(e) {
         e.preventDefault();
+
         const formData = new FormData(form);
 
         for (const [key, value] of formData) {
@@ -99,6 +100,7 @@ function useTimerInput(){
             // Append the Cards the the #App
             for(i = 0; i < imgs.length; i++) {  createBlocks(); }
             if(document.readyState == "complete") {
+                window.localStorage.setItem("last_played", lastTimePlayed());
                 startGame(options);
             };
     })
@@ -289,7 +291,6 @@ function restartGame() {
     document.querySelector("body").appendChild(restartBtn);
 
     restartBtn.onclick = () => {
-        window.localStorage.setItem("last_played", lastTimePlayed());
         setTimeout(() => {
             location.reload();
         }, 500)
