@@ -286,7 +286,7 @@ function restartGame() {
 
     let restartBtn = document.createElement("button");
     restartBtn.innerHTML = "Restart Game";
-    restartBtn.classList.add("bg-blue-500", "absolute", "top-4", "right-4", "hover:bg-blue-400", "text-white", "font-bold", "py-2", "px-4", "border-b-4", "border-blue-700", "hover:border-blue-500", "rounded");
+    restartBtn.classList.add("bg-blue-500", "absolute", "top-6", "left-6", "hover:bg-blue-400", "text-white", "font-bold", "py-2", "px-4", "border-b-4", "border-blue-700", "hover:border-blue-500", "rounded");
     document.querySelector("body").appendChild(restartBtn);
 
     restartBtn.onclick = () => {
@@ -392,5 +392,7 @@ function useTimerValidation(arr) {
 }
 
 function lastTimePlayed() {
-    return new Date();
+    let date =  new Date().toString();
+    let splited = date.split("GMT");
+    return splited[0];
 }
