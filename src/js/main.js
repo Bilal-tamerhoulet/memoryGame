@@ -89,7 +89,7 @@ function useTimerInput(){
           // generate the images
             for(i = 0; i < options.cardsNumber; i++){
                 imgs.push({
-                    pic: `https://robohash.org/${[i]}.png?set=set4&size=130x130`,
+                    pic: `https://robohash.org/${[i]}.png?set=set5&size=130x130`,
                     dataAttr: `pic-${[i]}`
                 });
             }
